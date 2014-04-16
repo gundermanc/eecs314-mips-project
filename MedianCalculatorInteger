@@ -1,0 +1,120 @@
+.data
+med_array: .space 404
+med_instructions: .asciiz "Enter up to 100 integers in order to get the median of. '0' will end inputs."
+med_prompt: .asciiz "Enter an integer: "
+med_report: .asciiz "The median is: "
+med_slash: .asciiz "/"
+med_newline: .asciiz "\n"
+med_space: .asciiz " "
+.text
+
+main:
+
+#initializes some variables
+la $t0, med_array
+
+#prints instructions for the user
+la $a0, med_instructions
+li $v0, 4
+syscall
+
+#prints a newline
+la $a0, med_newline
+li $v0, 4
+syscall
+
+med_input:
+
+#prints out prompt to the user
+la $a0, med_prompt
+li $v0, 4
+syscall
+
+#gets user input
+li $v0, 5
+syscall
+
+#puts integer into array
+sw $v0, 0($t0)
+
+#moves to next array index
+addi $t0, $t0, 4
+
+#continues asking for input if last input was not 0
+beqz $v0, med_calc
+
+j med_input
+
+med_calc:
+
+#gets the total number of entries
+la $t3, med_array
+sub $t0, $t0, $t3
+div $t0, $t0, 4
+addi $t3, $t0, -1
+
+#divides number of entries in half
+li $t2, 2
+div $t3, $t2
+
+#determines whether there is a remainder or not
+mfhi $t5
+beqz $t5, med_evenfinish
+
+#moves to the correct index
+mflo $t4
+li $t3, 4
+mult $t4, $t3
+mflo $t2
+la $t1, med_array
+add  $t4, $t1, $t2
+
+#prints out the median if there were an odd number of numbers
+la $a0, med_report
+li $v0, 4
+syscall
+lw $a0 ($t4)
+li $v0, 1
+syscall
+la $v0, 10
+syscall
+
+med_evenfinish:
+
+#moves to the correct index
+mflo $t4
+addi $t4, $t4, -1
+li $t3, 4
+mult $t4, $t3
+mflo $t2
+la $t1, med_array
+add  $t4, $t1, $t2
+
+#calculates the median if there are an even number of numbers
+lw $t0, ($t4)
+addi $t4, $t4, 4
+lw $t1, ($t4)
+add $t0, $t0, $t1
+la $t2, 2
+div $t0, $t2
+
+#prints the even median for the user
+la $a0, med_report
+li $v0, 4
+syscall
+mflo $a0
+li $v0, 1
+syscall
+la $a0, med_space
+li $v0, 4
+syscall
+mfhi $a0
+li $v0, 1
+syscall
+la $a0, med_slash
+li $v0, 4
+syscall
+la $a0, 2
+li $v0, 1
+syscall
+
