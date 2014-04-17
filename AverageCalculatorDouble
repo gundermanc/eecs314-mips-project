@@ -1,0 +1,87 @@
+.data
+avg_array: .space 808
+avg_instructions: .asciiz "Enter up to 100 numbers to average. '0' will end inputs."
+avg_prompt: .asciiz "Enter a number: "
+avg_report: .asciiz "The average is: "
+avg_slash: .asciiz "/"
+avg_newline: .asciiz "\n"
+avg_space: .asciiz " "
+.text
+
+main:
+
+#initializes some variables
+la $t0, avg_array
+
+#prints instructions for the user
+la $a0, avg_instructions
+li $v0, 4
+syscall
+
+#prints a newline
+la $a0, avg_newline
+li $v0, 4
+syscall
+
+avg_input:
+
+#prints out prompt to the user
+la $a0, avg_prompt
+li $v0, 4
+syscall
+
+#gets user input
+li $v0, 7
+syscall
+
+#puts integer into array
+s.d $f0, 0($t0)
+
+#moves to next array index
+addi $t0, $t0, 8
+
+#continues asking for input if last input was not 0
+c.eq.d $f0, $f2
+bc1t avg_calc
+
+j avg_input
+
+avg_calc:
+
+#resets array index
+la $t0, avg_array
+
+avg_calcloop:
+
+#load the index's value and move to the next index
+l.d $f0, 0($t0)
+addi $t0, $t0, 8
+
+#calculating total of all values
+add.d $f2, $f2, $f0
+
+#continues loop through array if 0 was not the input
+c.eq.d $f0, $f4
+bc1t avg_finish
+
+j avg_calcloop
+
+avg_finish:
+
+#gets the total number of entries
+la $t3, avg_array
+sub $t0, $t0, $t3
+div $t0, $t0, 8
+addi $t0, $t0, -1
+
+#calculates the average
+mtc1 $t0, $f6
+cvt.d.w $f6, $f6
+div.d $f12, $f2, $f6
+
+#prints the average for the user
+la $a0, avg_report
+li $v0, 4
+syscall
+li $v0, 3
+syscall
