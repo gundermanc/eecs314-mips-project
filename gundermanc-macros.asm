@@ -29,6 +29,13 @@
 	move  %register, $v0
 .end_macro
 
+# read a float in from the console
+.macro	read_float ( %register )
+	li   $v0, 6
+	syscall
+	# mov.s  %register, $f0
+.end_macro
+
 # pushes a return value to the stack
 .macro	push_return_value
 	addi	$sp, $sp, -4		# move stack pointer

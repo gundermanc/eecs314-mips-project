@@ -14,7 +14,6 @@
 
 # indicates start of code (first instruction to execute)		
 conv_main:	
-	begin_routine				# push return to stack
 conv_menu_begin:
 	print_string ( conv_welcome_prompt )	# prompt user for menu option
 	
@@ -45,7 +44,6 @@ conv_menu_begin:
 	
 	jr	$t2		# jump to selected function
 	j	menu_begin	# return to the menu
-	end_routine
 
 conv_call_library:
 	jr	$t2	

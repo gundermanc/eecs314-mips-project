@@ -5,36 +5,64 @@
 
 .data	# variable declarations follow this line
 	tempc_welcome_prompt:	.asciiz "You have selected the Temperature conversions library\n"
+	tempc_from_unit_prompt:	.asciiz	"Pick FROM unit\n"
+	tempc_to_unit_prompt:	.asciiz	"Pick TO unit\n"
+	tempc_bad_unit_prompt:	.asciiz	"Invalid menu option\n"
+	tempc_value_prompt:	.asciiz	"What value would you like to convert?\n"
 	
-	tempc_menu_option_quit:	.asciiz "(0) Return to menu."
+	# temperature units
+	tempc_unit_cel:		.asciiz "(0) Celsius\n"
+	tempc_unit_fah:		.asciiz "(1) Fahrenheit\n"
+	tempc_unit_kel:		.asciiz "(2) Kelvin\n"
 .text
-
-# indicates start of code (first instruction to execute)		
-tempc_main:	
-	begin_routine				# push return to stack
-tempc_menu_begin:
-	print_string ( tempc_welcome_prompt )	# prompt user for menu option
+	
+tempc_main:
+	print_string ( tempc_welcome_prompt )	# print welcome message
+tempc_from_unit:
+	print_string ( tempc_from_unit_prompt ) # ask for "FROM" unit
+	jal	tempc_unit_menu			# get the FROM unit from user, store in $v0
+	move	$t0, $v0			# store FROM unit in $t0
+	
+	print_string ( tempc_to_unit_prompt )	# ask for "TO" unit
+	jal	tempc_unit_menu			# get the TO unit from user, store in $v0
+	move	$t1, $v0			# store TO unit in $t1
+	
+	print_string ( tempc_value_prompt )	# prompt user for the value
+	read_float ( $f1 )			# read value from console
+	
+	#li	$t0, 0
+	#beq	$v0, $t0, tempc_from_cel	# incoming number
+	
+	
+	
+	j	conv_menu_begin			# return to the conversions menu
+	
+	
+# get the ID of the desired unit by prompting the user
+tempc_unit_menu:
+	begin_routine
 	
 	# print menu options
-	print_string ( tempc_menu_option_quit )
+	print_string ( tempc_unit_cel )
+	print_string ( tempc_unit_fah )
+	print_string ( tempc_unit_kel )
 	
-	# menu option select. bad runtime complexity, I know, but I don't know jump tables
-	read_integer ( $t0 )			# read integer from console
+	read_integer ( $v0 )			# prompt user for menu option
 	
-	# PUT MENU OPTIONS HERE
-	# use the $t1 as our comparison register
-	# ---------------------------------------------------
+	# check menu option is within valid range
+	li	$t0, 2
+	bgt	$v0, $t0, tempc_bad_unit
 	
-	# (0) Quit
-	li	$t1, 0				# key that must be pressed
-	beq	$t1, $t0, conv_menu_begin	# calling code, same for all options
+	# check menu option is within valid range
+	li	$t0, 0
+	blt 	$v0, $t0, tempc_bad_unit
 	
-	# ---------------------------------------------------
-	# no options matched, ask again
-	print_string ( menu_unknown_prompt )
-	j	tempc_menu_begin
-	
-	jr	$t2		# jump to selected function
-	j	tempc_menu_begin # return to the main menu
 	end_routine
+	
+# invalid unit menu option
+tempc_bad_unit:
+	print_string ( tempc_bad_unit_prompt )
+	j	tempc_unit_menu
+	
+	
 	
