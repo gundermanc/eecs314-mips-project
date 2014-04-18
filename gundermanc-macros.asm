@@ -20,6 +20,13 @@
 	syscall
 .end_macro
 
+# read an integer in from the console
+.macro	read_integer ( %register )
+	li   $v0, 5
+	syscall
+	move  %register, $v0
+.end_macro
+
 # pushes a return value to the stack
 .macro	push_return_value
 	addi	$sp, $sp, -4		# move stack pointer
@@ -32,16 +39,20 @@
 	addi	$sp, $sp, 4		# move stack pointer
 .end_macro
 
-# defines a routine
-.macro begin_routine (%name)
-	%name:
+# calls a routine and saves the return address
+.macro call ( %routine )
+	jal	%routine
+.end_macro 
+
+# defines the beginning of a routine
+.macro begin_routine
 	push_return_value
 .end_macro
 
 .macro end_routine
 	pop_return_value
 	jr	$ra
-.end_macro 
+.end_macro
 
 # ends the program 
 .macro	exit
