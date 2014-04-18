@@ -69,11 +69,8 @@ menu_begin:
 	j	menu_begin
 	
 call_library:
-
-	jr	$t2		# pseudo "jal" to library entry point
-	j	menu_begin	# return to the menu
+	jr	$t2	
 	
-	end_routine
 	
 # exit program function
 quit:
