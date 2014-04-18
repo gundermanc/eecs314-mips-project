@@ -1,27 +1,40 @@
 # Conversions Program Module
 # By: Christian Gunderman
 
-.data	# variable declarations follow this line
-	conv_welcome_prompt:	.asciiz ""
-	
-	# Macros:
+#.include "gundermanc-macros.asm"
 
+.data	# variable declarations follow this line
+	conv_welcome_prompt:	.asciiz "You have selected the conversions library\n"
 	
-.text       # instructions follow this line
+	conv_menu_option_quit:	.asciiz "(0) Return to main menu."
+.text
+
 # indicates start of code (first instruction to execute)		
 conv_main:	
-	# push return address to stack
-	#addi	$sp, $sp, -4		# move stack pointer
-	#sw 	$ra, ($sp)		# store return address
-
-	#print_string welcome_prompt
-	li	$t0, 2342424
-	print_integer ( $t0 )
-
-	# pop return address to return address register
-	#lw	$ra, ($sp)		# load return address to $ra
-	#addi	$sp, $sp, 4		# move stack pointer
+	begin_routine				# push return to stack
+conv_menu_begin:
+	print_string ( conv_welcome_prompt )	# prompt user for menu option
 	
-	# since this is MARS and MARS doesn't call main, we have no return value,
-	# so we just exit instead
-	exit
+	# print menu options
+	print_string ( conv_menu_option_quit )
+	
+	# menu option select. bad runtime complexity, I know, but I don't know jump tables
+	read_integer ( $t0 )			# read integer from console
+	
+	# PUT MENU OPTIONS HERE
+	# use the $t1 as our comparison register
+	# ---------------------------------------------------
+	
+	# (0) Quit
+	li	$t1, 0				# key that must be pressed
+	beq	$t1, $t0, menu_begin		# calling code, same for all options
+	
+	# ---------------------------------------------------
+	# no options matched, ask again
+	print_string ( menu_unknown_prompt )
+	j	conv_menu_begin
+	
+	jr	$t2		# jump to selected function
+	j	menu_begin	# return to the menu
+	end_routine
+	

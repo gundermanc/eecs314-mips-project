@@ -9,7 +9,6 @@
 	author_prompt:		.asciiz "By: Christian, Laura, Elliot, and Phillip\n\n"
 	
 	menu_prompt:		.asciiz "\nPick a math library to work with:\n"
-	menu_unknown_prompt:	.asciiz "Unknown menu option.\n\n"
 	
 	menu_option_quit:	.asciiz	"(0) Quit\n"
 	menu_option_conv:	.asciiz "(1) Conversions Functions\n"
@@ -70,8 +69,7 @@ menu_begin:
 	j	menu_begin
 	
 call_library:
-	jal	get_addr	# use this hacky way of getting the return address using "jal"
-get_addr:
+
 	jr	$t2		# pseudo "jal" to library entry point
 	j	menu_begin	# return to the menu
 	

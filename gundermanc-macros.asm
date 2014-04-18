@@ -5,6 +5,8 @@
 #   .include "gundermanc-macros.asm"
 
 
+.data
+	menu_unknown_prompt:	.asciiz "Unknown menu option.\n\n"
 
 # prints the string at the specified address to the console
 .macro	print_string (%string_label )
