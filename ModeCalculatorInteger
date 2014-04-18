@@ -1,0 +1,155 @@
+.data
+mod_array: .space 404
+mod_array2: .space 404
+mod_instructions: .asciiz "Enter up to 100 integers to get the mode of. '0' will end inputs."
+mod_prompt: .asciiz "Enter an integer: "
+mod_report: .asciiz "The mode number(s): "
+mod_repeated: .asciiz "The number(s) repeated "
+mod_times: .asciiz " times."
+mod_newline: .asciiz "\n"
+mod_space: .asciiz " "
+.text
+
+main:
+
+#initializes some variables
+la $t0, mod_array
+
+#prints instructions for the user
+la $a0, mod_instructions
+li $v0, 4
+syscall
+
+#prints a newline
+la $a0, mod_newline
+li $v0, 4
+syscall
+
+mod_input:
+
+#prints out prompt to the user
+la $a0, mod_prompt
+li $v0, 4
+syscall
+
+#gets user input
+li $v0, 5
+syscall
+
+#if input was zero, moves to get the mode
+beqz $v0, mod_calc
+
+#resets array index to begin search
+la $t7, mod_array
+
+mod_search:
+
+#compares number at index to the given number
+lw $t6, ($t7)
+beq $t6, $v0, mod_inarray
+beqz $t6, mod_notinarray
+addi $t7, $t7, 4
+
+j mod_search
+
+mod_inarray:
+
+#increments the number count if the number is the same
+la $t4, ($t7)
+la $t6, mod_array
+sub $t4, $t4, $t6
+la $t6, mod_array2
+add $t4, $t4, $t6
+lw $t5, ($t4)
+add $t5, $t5, 1
+sw $t5, ($t4)
+addi $t7, $t7, 4
+j mod_input
+
+mod_notinarray:
+
+#else puts integer into array
+sw $v0, ($t7)
+addi $t7, $t7, 4
+j mod_input
+
+mod_calc:
+
+#resets array and largest number
+la $t7, mod_array2
+li $t0, 0
+
+mod_findlargest:
+
+#searches through the number count array to find the largest amount
+lw $t6, ($t7)
+bgt $t6, $t0, mod_greater
+la $t6, mod_array2
+sub $t2, $t7, $t6
+la $t6, mod_array
+add $t2, $t2, $t6
+lw $t5, ($t2)
+beqz $t5, mod_end
+addi $t7, $t7, 4
+j mod_findlargest
+
+mod_greater:
+
+#sets the current greatest number count
+la $t0, ($t6)
+addi $t7, $t7, 4
+j mod_findlargest
+
+mod_end:
+
+#resets number count array
+la $t3, mod_array2
+
+#prints mode string to user
+la $a0, mod_report
+li $v0, 4
+syscall
+
+mod_endloop:
+
+#goes through the number count array
+lw $t4, ($t3)
+beq $t0, $t4, mod_printout
+la $t1, mod_array2
+sub $t2, $t3, $t1
+la $t1, mod_array
+add $t2, $t2, $t1
+lw $t7, ($t2)
+beqz $t7, mod_finish
+addi $t3, $t3, 4
+j mod_endloop
+
+mod_printout:
+
+#prints the number that has the highest repeat times
+la $t1, mod_array2
+sub $t2, $t3, $t1
+la $t1, mod_array
+add $t2, $t2, $t1
+lw $a0, ($t2)
+li $v0, 1
+syscall
+la $a0, mod_space
+li $v0, 4
+syscall
+addi $t3, $t3, 4
+j mod_endloop
+
+mod_finish:
+
+#prints out the number of times repeated
+la $a0, mod_repeated
+li $v0, 4
+syscall
+la $a0, ($t0)
+addi $a0, $a0, 1
+li $v0, 1
+syscall
+la $a0, mod_times
+li $v0, 4
+syscall
