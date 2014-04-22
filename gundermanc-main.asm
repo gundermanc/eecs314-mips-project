@@ -6,7 +6,7 @@
 
 .data	# variable declarations follow this line
 	welcome_prompt:		.asciiz "EECS314 Math Operations Library\n"
-	author_prompt:		.asciiz "By: Christian, Laura, Elliot, and Phillip\n\n"
+	author_prompt:		.asciiz "By: Christian, Elliot, Laura, and Phillip\n\n"
 	
 	menu_prompt:		.asciiz "\nPick a math library to work with:\n"
 	
@@ -30,18 +30,17 @@ main:
 	begin_routine				# push return to stack
 	
 	# print welcome strings
+	clear_console				# clear the console before welcome message
 	print_string ( welcome_prompt )		# print library welcome string
 	print_string ( author_prompt )		# print library author string
 	
 	# enter the main menu
-	call ( main_menu )
+	j	main_menu
 	
-	exit
-	#end_routine				# pop and return
+	end_routine				# pop and return
 	
 # main menu routine
 main_menu:
-	begin_routine				# push return to stack
 menu_begin:
 	print_string ( menu_prompt )		# prompt user for menu option
 	

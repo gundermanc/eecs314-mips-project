@@ -7,7 +7,13 @@
 
 .data
 	menu_unknown_prompt:	.asciiz "Unknown menu option.\n\n"
-
+	console_clear_prompt:	.asciiz "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+	
+# prints a TON of new lines so we get a clear console
+.macro	clear_console
+	print_string ( console_clear_prompt )
+.end_macro
+	
 # prints the string at the specified address to the console
 .macro	print_string (%string_label )
 	la  $a0, %string_label
