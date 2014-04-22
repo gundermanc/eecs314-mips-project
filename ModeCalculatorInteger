@@ -1,6 +1,8 @@
 .data
-mod_array: .space 404
-mod_array2: .space 404
+.align 4
+	mod_array: .space 404
+.align 4
+	mod_array2: .space 404
 mod_instructions: .asciiz "Enter up to 100 integers to get the mode of. '0' will end inputs."
 mod_prompt: .asciiz "Enter an integer: "
 mod_report: .asciiz "The mode number(s): "
@@ -10,7 +12,7 @@ mod_newline: .asciiz "\n"
 mod_space: .asciiz " "
 .text
 
-main:
+mod_main:
 
 #initializes some variables
 la $t0, mod_array
@@ -153,3 +155,7 @@ syscall
 la $a0, mod_times
 li $v0, 4
 syscall
+
+# added by Chris: returns to the main menu
+print_string ( mod_newline )
+j moc_main
