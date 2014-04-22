@@ -1,5 +1,12 @@
-Our EECS 314 MIPS Assembly Project.
+Our EECS 314 MIPS Assembly Project:
+A suite of Math functions.
 
-Suite      	Owner		Progress
-Menus      	Gundermanc	0%
-Linear alg.	pabb		0%
+Suite					Owner			Progress
+Menus					Gundermanc		25%
+Measures of Center		las203			??
+Linear alg.				pabb			0%
+
+System Requirements:
+Running this application requires MARS MIPS simulator. To execute, open the
+gundermanc-main.asm file, build, and execute. This is the entry point. From
+here, you can navigate the menus using the number keys and [Enter].
