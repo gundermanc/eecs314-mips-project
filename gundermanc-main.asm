@@ -12,6 +12,7 @@
 	
 	menu_option_quit:	.asciiz	"(0) Quit\n"
 	menu_option_conv:	.asciiz "(1) Conversions Functions\n"
+	menu_option_moc:	.asciiz "(2) Measures of Center (avg, median, etc)\n"
 	
 	exit_prompt:		.asciiz "\n\nGood bye! :)"
 	
@@ -22,6 +23,7 @@
 
 # library code should be included here:
 .include "gundermanc-conversions.asm"
+.include "gundermanc-centers.asm"
 
 # entry point routine
 main:
@@ -34,7 +36,8 @@ main:
 	# enter the main menu
 	call ( main_menu )
 	
-	end_routine				# pop and return
+	exit
+	#end_routine				# pop and return
 	
 # main menu routine
 main_menu:
@@ -43,7 +46,8 @@ menu_begin:
 	print_string ( menu_prompt )		# prompt user for menu option
 	
 	# print menu options
-	print_string ( menu_option_conv )	
+	print_string ( menu_option_conv )
+	print_string ( menu_option_moc )	
 	print_string ( menu_option_quit )
 	
 	# menu option select. bad runtime complexity, I know, but I don't know jump tables
@@ -61,6 +65,11 @@ menu_begin:
 	# (1) Conversions Library
 	li	$t1, 1				# key that must be pressed
 	la	$t2, conv_main			# library entry point address
+	beq	$t1, $t0, call_library		# calling code, same for all options
+	
+	# (2) Measures of Center Library
+	li	$t1, 2				# key that must be pressed
+	la	$t2, moc_main			# library entry point address
 	beq	$t1, $t0, call_library		# calling code, same for all options
 	
 	# ---------------------------------------------------

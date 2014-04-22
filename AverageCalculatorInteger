@@ -1,5 +1,6 @@
 .data
-avg_array: .space 404
+.align 4	# added by Chris, this makes the array align to the word boundary
+	avg_array: 		.space 404
 avg_instructions: .asciiz "Enter up to 100 integers to average. '0' will end inputs."
 avg_prompt: .asciiz "Enter an integer: "
 avg_report: .asciiz "The average is: "
@@ -8,7 +9,7 @@ avg_newline: .asciiz "\n"
 avg_space: .asciiz " "
 .text
 
-main:
+avg_main:
 
 #initializes some variables
 la $t0, avg_array
@@ -94,3 +95,7 @@ syscall
 la $a0, ($t0)
 li $v0, 1
 syscall
+
+# added by Chris, returns to the menu
+print_string ( avg_newline )
+jal moc_main
