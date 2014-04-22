@@ -6,6 +6,7 @@
 
 .include "AverageCalculatorInteger"
 .include "AverageCalculatorDouble"
+.include "MedianCalculatorInteger"
 
 .data	# variable declarations follow this line
 	moc_welcome_prompt:	.asciiz "You have selected measures of center library\n"
@@ -13,6 +14,7 @@
 	moc_menu_option_quit:	.asciiz "(0) Return to main menu.\n"
 	moc_menu_option_avg:	.asciiz "(1) Average (Integers)\n"
 	moc_menu_option_avgd:	.asciiz "(2) Average (Doubles)\n"
+	moc_menu_option_med:	.asciiz "(3) Median (Integers)\n"
 .text
 
 # indicates start of code (first instruction to execute)		
@@ -24,6 +26,7 @@ moc_menu_begin:
 	print_string ( moc_menu_option_quit )
 	print_string ( moc_menu_option_avg )
 	print_string ( moc_menu_option_avgd )
+	print_string ( moc_menu_option_med )
 	
 	# menu option select. bad runtime complexity, I know, but I don't know jump tables
 	read_integer ( $t0 )			# read integer from console
@@ -44,6 +47,11 @@ moc_menu_begin:
 	# (2) Average (Doubles)
 	li	$t1, 2				# key that must be pressed
 	la	$t2, avgd_main			# library entry point address
+	beq	$t1, $t0, moc_call_library	# calling code, same for all options
+	
+	# (3) Median (Integers)
+	li	$t1, 3				# key that must be pressed
+	la	$t2, med_main			# library entry point address
 	beq	$t1, $t0, moc_call_library	# calling code, same for all options
 	
 	# ---------------------------------------------------

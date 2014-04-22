@@ -1,5 +1,7 @@
 .data
-med_array: .space 404
+# added by Chris 4/22, fixes memory alignment bug
+.align 4
+	med_array: .space 404
 med_instructions: .asciiz "Enter up to 100 integers in order to get the median of. '0' will end inputs."
 med_prompt: .asciiz "Enter an integer: "
 med_report: .asciiz "The median is: "
@@ -8,7 +10,7 @@ med_newline: .asciiz "\n"
 med_space: .asciiz " "
 .text
 
-main:
+med_main:
 
 #initializes some variables
 la $t0, med_array
@@ -118,3 +120,6 @@ la $a0, 2
 li $v0, 1
 syscall
 
+# added by Chris, returns to the menu
+print_string ( avg_newline )
+jal moc_main
