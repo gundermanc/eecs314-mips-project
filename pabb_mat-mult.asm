@@ -4,7 +4,10 @@
 # TODO: Add user input for rows of Mat1 and Mat2
 # Can double-check correctness @ http://www.bluebit.gr/matrix-calculator/multiply.aspx
 ######################################################################################
-.data                                           
+.include "gundermanc-macros.asm"
+
+.data      
+                                     
 newline:
 	.asciiz	"\n"
 	.align	2
