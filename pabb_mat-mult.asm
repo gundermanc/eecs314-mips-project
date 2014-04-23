@@ -1,7 +1,7 @@
 ######################################################################################
 # Square Matrix Multiplier
 # by Phil Blackburn
-# TODO: Add user input for rows of Mat1 and Mat2
+# Multiplies square matrices up to size 10 x 10
 # Can double-check correctness @ http://www.bluebit.gr/matrix-calculator/multiply.aspx
 ######################################################################################
 .include "gundermanc-macros.asm"
@@ -12,62 +12,134 @@ newline:
 	.asciiz	"\n"
 	.align	2
 num_size:
-	.word	10	# n*n : size of the square matrix to be computed
+	.space	40	# n*n : size of the square matrix to be computed
 delimiter:
 	.asciiz ","
+input_size:
+	.asciiz "Input the number of rows/columns for your matrices (max = 10):"
+input_mat1:
+	.asciiz "Input the elements of the first matrix sequentially (first row, second row...) and hit enter after each element: "
+input_mat2:
+	.asciiz "Input the elements of the second matrix sequentially (first row, second row...) and hit enter after each element: "
+prompt:
+	.asciiz "Enter next integer: "
+	.align	2	# only have this so that Mat1 ends up on word boundary ... yeah, I don't know why that would be required either
 
-# To multiply different size, change Mat1/2/3 accordingly, and change num_size to number of elements per row/col
-
-Mat1:    
-	.word 1,1,1,1,1,1,1,1,1,1
-        .word 2,2,2,2,2,2,2,2,2,2
-        .word 3,3,3,3,3,3,3,3,3,3
-        .word 4,4,4,4,4,4,4,4,4,4
-        .word 5,5,5,5,5,5,5,5,5,5
-       	.word 6,6,6,6,6,6,6,6,6,6
-        .word 7,7,7,7,7,7,7,7,7,7
-        .word 8,8,8,8,8,8,8,8,8,8
-        .word 9,9,9,9,9,9,9,9,9,9
-        .word 10,10,10,10,10,10,10,10,10,10
-
-Mat2:
-	.word 1,1,1,1,1,1,1,1,1,1
-	.word 1,1,1,1,1,1,1,1,1,1
-        .word 1,1,1,1,1,1,1,1,1,1
-        .word 1,1,1,1,1,1,1,1,1,1
-        .word 1,1,1,1,1,1,1,1,1,1
-       	.word 1,1,1,1,1,1,1,1,1,1
-        .word 1,1,1,1,1,1,1,1,1,1
-        .word 1,1,1,1,1,1,1,1,1,1
-        .word 1,1,1,1,1,1,1,1,1,1
-        .word 1,1,1,1,1,1,1,1,1,1
-
-Mat3:
-	.word 0,0,0,0,0,0,0,0,0,0
-	.word 0,0,0,0,0,0,0,0,0,0
-	.word 0,0,0,0,0,0,0,0,0,0
-	.word 0,0,0,0,0,0,0,0,0,0
-	.word 0,0,0,0,0,0,0,0,0,0
-	.word 0,0,0,0,0,0,0,0,0,0
-	.word 0,0,0,0,0,0,0,0,0,0
-	.word 0,0,0,0,0,0,0,0,0,0
-	.word 0,0,0,0,0,0,0,0,0,0
-	.word 0,0,0,0,0,0,0,0,0,0
+# Each matrix can hold up to 100 elements (10 rows/cols)
+.align	4
+	Mat1:	.space 400	# input matrix
+	Mat2:	.space 400	# input matrix
+	Mat3:	.space 400	# result matrix
 
 .text                                               
 
 	j main
 	
 main:
-	la $s0, num_size	# Load the address of num_size
-	lw $s0, 0($s0)		# Load the value contained in num_size
-	la $s1, Mat1		# Load Mat1; $s1 points to Mat1
-	la $s2, Mat2		# Load Mat2; $s2 points to Mat2
-	la $s3, Mat3		# Load Mat3; $s3 points to Mat3
+	la $s0, num_size	# initialize the address of num_size
+	la $s1, Mat1		# initialize Mat1 address
+	la $s2, Mat2		# initialize Mat2 address
+	la $s3, Mat3		# initialize Mat3 address
 	li $s4, 0		# initialize i counter
 	li $s5, 0		# initialize j counter
-	li $s6, 0		# initialize k counter
-	j loop_i		# start the nested loops
+	li $s6, 0		# initialize k counter	
+	li $t5, 0		# initialize $t5 as a counter for our input feed	
+	j feed_input		# begin getting user input to fill matrices
+
+feed_input:	
+	# prompt to get row/col size
+	la $a0, input_size
+	li $v0, 4
+	syscall
+	
+	# insert newline
+	la $a0, newline
+	li $v0, 4
+	syscall
+	
+	# read in row/col size
+	li $v0, 5
+	syscall
+	
+	# store value in num_size
+	sw $v0, ($s0)		# store row/col size in num_size 
+	lw $s0, 0($s0)		# load the value contained in num_size
+	
+	# create stopping condition for getting input for a matrix : user will input num_size*num_size elements for each matrix
+	li $t0, 0
+	addi $t0, $s0, 0	# t0 = num_size ($t0 will be our counter's ceiling)
+	mult $s0, $t0		# num_size^2
+	mflo $t0		# move result to $t0	
+	
+	# prompt to get Mat1 elements
+	la $a0, input_mat1
+	li $v0, 4
+	syscall
+	
+	# insert newline
+	la $a0, newline
+	li $v0, 4
+	syscall
+	
+	mat1_input:
+	# prompt for next integer
+	la $a0, prompt
+	li $v0, 4
+	syscall
+	
+	# get next Mat1 element
+	li $v0, 5
+	syscall	
+	 
+	sw $v0, 0($s1)		# put integer into array
+	addi $s1, $s1, 4	# increment array index
+
+	# keep track with a counter, then reset counter before Mat2 prompt
+	addi $t5, $t5, 1 
+	bge $t5, $t0, mat2_reset	# while MAX >= COUNTER, keep looping, else begin filling Mat2
+
+	j mat1_input		# need to keep prompting user input until user has input num_size*num_size elements
+
+	mat2_reset:
+		li $t5, 0	# reset COUNTER for Mat2 input
+		
+	# prompt to get Mat2 elements
+	la $a0, input_mat2
+	li $v0, 4
+	syscall
+	
+	# insert newline
+	la $a0, newline
+	li $v0, 4
+	syscall	
+		
+	mat2_input:
+	# prompt for next integer
+	la $a0, prompt
+	li $v0, 4
+	syscall
+	
+	# get next Mat2 element
+	li $v0, 5
+	syscall	
+	
+	sw $v0, 0($s2)		# put integer into array
+	addi $s2, $s2, 4	# increment array index
+
+	# keep track with a counter, then reset counter before Mat2 prompt
+	addi $t5, $t5, 1 
+	bge $t5, $t0, reset_count	# while MAX >= COUNTER, keep looping, else begin multiplying
+
+	j mat2_input		# need to keep prompting user input until user has input num_size*num_size elements		
+	
+	# return $s1, $s2 to initial values, reset COUNTER, and start looping
+	reset_count:
+		mul $t9, $t5, 4	# multiply COUNTER * 4 to get amount we need to subtract to get to starting address of $s1, $2
+		mflo $t9 	# move value to $t9
+		sub $s1, $s1, $t9
+		sub $s2, $s2, $t9
+		li $t5, 0	# reset COUNTER	
+		j loop_i
 
 loop_i:
     	beq  $s4, $s0, loop_4	# if (i == num_size) goto print, else
@@ -147,10 +219,9 @@ loop_4:
 	
 	j print_loop                                                                          
 
-# Output format: FIRST ROW, SECOND ROW, ..., NUM_SIZE ROW
 print_loop:
 	addu $t4, $t2, $s3	# t4 = Mat3 + OFFSET
-	lw $t1, ($t4)		# t1 = value of Mat3 + OFFSET
+	lw $t1, 0($t4)		# t1 = value of Mat3 + OFFSET
 	
 	li $v0, 1		# load the next Matrix element and print
 	add $a0, $t1, $zero
@@ -177,7 +248,7 @@ line_break:
 	syscall			
 	        
     	j post_break			# return to print_loop, continue execution after branch
-    
+            
 done:
     	li $v0, 10		
     	syscall
