@@ -76,7 +76,7 @@ menu_begin:
 	
 	# (3) Trigonometry
 	li	$t1, 3				# key that must be pressed
-	la	$t2, moc_main			# library entry point address
+	la	$t2, trig_main			# library entry point address
 	beq	$t1, $t0, call_library		# calling code, same for all options
 	
 	# ---------------------------------------------------
