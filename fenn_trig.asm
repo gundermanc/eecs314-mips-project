@@ -29,8 +29,7 @@
 	
 	print_string functions
 	
-	jal 	readint		# read the function selection
-	move	$s0, $v0	# store it in s0
+	read_integer ( $s0 )	# read the function selection store it in s0
 		
 	print_string give_x
 	jal 	readDouble	# x is stored in f0
@@ -177,7 +176,15 @@ subsqrt:
     	mov.d   $f0, $f2        # result = $f0
     	jr	$ra             # return to caller
 
+readDouble:
+	li	$v0, 3
+	syscall
+	jr	$ra
 
+printdb:
+	li	$v0, 7
+	syscall
+	jr	$ra	
 
 # returns to the main menu
         print_string ( newline )
