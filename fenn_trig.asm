@@ -22,7 +22,7 @@
 	c3: .double .225
 
 .text
-
+trig_main:
 	print_string intro_str
 		
 	print_string func_select
