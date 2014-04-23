@@ -8,7 +8,7 @@
 	intro_str: .asciiz 		"\nWhich of the following functions\nwould you like to use?\n----------------------\n"
 	newline: .asciiz 		"\n"
 	func_select: .asciiz 		"\nEnter the number contained in the square bracket\nthat corresponds with the function you want\n"
-	functions: .asciiz 		"\nSin(x)[1]\nCos(x)[2]\nTan(x)[3]\nSec(x)[4]\nCsc(x)\nCot(x)\n----------------------\n"
+	functions: .asciiz 		"\nSin(x)[1]\nCos(x)[2]\nTan(x)[3]\nSec(x)[4]\nCsc(x)[5]\nCot(x)[6]\n----------------------\n"
 	give_x: .asciiz 		"\nPlease give your value of x in radians\n"
 	tol: .double 1.0e-15       	# tolerance for sqrt
 	zero: .double 0.0
