@@ -9,8 +9,8 @@
 	intro_str: .asciiz 		"\nWhich of the following functions\nwould you like to use?\n----------------------\n"
 	newline: .asciiz 		"\n"
 	func_select: .asciiz 		"\nEnter the number contained in the square bracket\nthat corresponds with the function you want\n"
-	functions: .asciiz 		"\nSin(x)[1]\nCos(x)[2]\nTan(x)[3]\nSec(x)[4]\n----------------------\n"
-	give_x: .asciiz 		"\nPlease give your value of x\n"
+	functions: .asciiz 		"\nSin(x)[1]\nCos(x)[2]\nTan(x)[3]\nSec(x)[4]\nCsc(x)\nCot(x)\n----------------------\n"
+	give_x: .asciiz 		"\nPlease give your value of x in radians\n"
 	tol: .double 1.0e-15       	# tolerance for sqrt
 	zero: .double 0.0
 	one:  .double 1.0
@@ -153,7 +153,8 @@ cot:
 	jr	$ra
 	
 	
-
+#	This square root approximation is here, and may be useful, but currently isn't necessary for anything.  I might
+#	transfer it to geometry to use for calculating the hypoteneuse of right triangles.
 #####################################################################
 #   Square Root using Newton-Raphson Iteration  (Newton's Method)
 #####################################################################
