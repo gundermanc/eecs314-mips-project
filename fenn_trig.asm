@@ -23,16 +23,16 @@
 
 .text
 
-	printstr intro_str
+	print_string intro_str
 		
-	printstr func_select
+	print_string func_select
 	
-	printstr functions
+	print_string functions
 	
 	jal 	readint		# read the function selection
 	move	$s0, $v0	# store it in s0
 		
-	printstr give_x
+	print_string give_x
 	jal 	readDouble	# x is stored in f0
 	beq	$s0, 1, high_pres_sin	# check which function was selected
 	beq	$s0, 2, cos
