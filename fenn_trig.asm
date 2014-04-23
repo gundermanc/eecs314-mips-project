@@ -3,7 +3,6 @@
 # 4/19/2014
 
 # Perform various math functions
-.include "gundermanc-macros.asm"
 
 .data
 	intro_str: .asciiz 		"\nWhich of the following functions\nwould you like to use?\n----------------------\n"
