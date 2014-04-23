@@ -39,7 +39,7 @@
 .macro	read_float ( %register )
 	li   $v0, 6
 	syscall
-	# mov.s  %register, $f0
+	#mov.s  %register, $f0
 .end_macro
 
 # pushes a return value to the stack
