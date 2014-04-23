@@ -2,7 +2,6 @@
 # Square Matrix Multiplier
 # by Phil Blackburn
 # TODO: Add user input for rows of Mat1 and Mat2
-# TODO: Split output print by num_size to get "matrix" formatted output
 # Can double-check correctness @ http://www.bluebit.gr/matrix-calculator/multiply.aspx
 ######################################################################################
 .data                                           
@@ -142,7 +141,7 @@ loop_4:
 	li $t2, 0		# clear $t2 to 0; this will be the OFFSET  
 	li $t4, 0		# clear $t4 to be used to hold next element                                              
 	li $t5, 0		# clear $t5 to be the ROW DELIMITER (for formatting more nicely)
-
+	
 	j print_loop                                                                          
 
 # Output format: FIRST ROW, SECOND ROW, ..., NUM_SIZE ROW
@@ -157,20 +156,24 @@ print_loop:
 	la $a0, delimiter
 	syscall	
 	
-	##########################################################################################
-	# TODO
-	#	set another COUNTER to track number of elements printed
-	#	count until COUNTER == num_size, then print newline (to print matrix-style format)
-	#
-	#addi $t5, $t5, 1		#add 1 to the counter
-	#beq $t5, num_size, 	
-	#jal print_string(newline)	#print newline and reset $t5 to 0
-	##########################################################################################
+	# count until $t5 == num_size, then print newline (to print matrix-style format)
+	addi $t5, $t5, 1		# increment the counter for the ROW DELIMITER
+	post_break:			# use this label to return here if we need a row break
+	beq $t5, $s6, line_break	# if we've printed num_size elements, go print a line break
 	
 	addi $t2, $t2, 4		# increment OFFSET counter by 4
 	bge $t0, $t2, print_loop	# bge MAX, OFFSET, print_loop
 	
 	j done
+    
+line_break:
+	li $t5, 0			# reset $t5 to 0
+	
+	li $v0, 4			# insert newline after each row
+	la $a0, newline
+	syscall			
+	        
+    	j post_break			# return to print_loop, continue execution after branch
     
 done:
     	li $v0, 10		
