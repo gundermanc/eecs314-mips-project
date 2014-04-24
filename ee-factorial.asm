@@ -1,13 +1,15 @@
-.include "gundermanc-macros.asm"
 	.data
 	factorial_result: .asciiz "Result: "
+	ask_fact: .asciiz "Enter a number[+int]: "
 	ltzerror: .asciiz "Number must be a positive integer"
 	.text
 #finds $t0!
 #uses $t0-$t3
-power:
+fact_main:
+	print_string(ask_fact)
+	read_integer($t0)
 	######setup:
-	addi $t0,$zero,4
+	#addi $t0,$zero,4
 	######
 	move $t1,$t0
 	
@@ -22,8 +24,8 @@ factloop:
 	j factloop
 error:
 	print_string(ltzerror)
-	j done
+	j factdone
 success:
 	print_integer($t0)
-done:
-	
+factdone:
+	j ee_main

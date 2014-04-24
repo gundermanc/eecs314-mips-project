@@ -14,6 +14,7 @@
 	menu_option_conv:	.asciiz "(1) Conversions Functions\n"
 	menu_option_moc:	.asciiz "(2) Measures of Center (avg, median, etc)\n"
 	menu_option_trig:	.asciiz "(3) Trigonometry\n"
+	menu_option_math:	.asciiz "(4) Math (pow, fact, log)\n"
 	
 	exit_prompt:		.asciiz "\n\nGood bye! :)"
 	
@@ -26,6 +27,7 @@
 .include "gundermanc-conversions.asm"
 .include "gundermanc-centers.asm"
 .include "fenn_trig.asm"
+.include "ee-menu.asm"
 
 # entry point routine
 main:
@@ -50,6 +52,7 @@ menu_begin:
 	print_string ( menu_option_conv )
 	print_string ( menu_option_moc )
 	print_string ( menu_option_trig )
+	print_string ( menu_option_math )
 	print_string ( menu_option_quit )
 	
 	# menu option select. bad runtime complexity, I know, but I don't know jump tables
@@ -77,6 +80,11 @@ menu_begin:
 	# (3) Trigonometry
 	li	$t1, 3				# key that must be pressed
 	la	$t2, trig_main			# library entry point address
+	beq	$t1, $t0, call_library		# calling code, same for all options
+	
+	# (4) Math
+	li	$t1, 4				# key that must be pressed
+	la	$t2, ee_main			# library entry point address
 	beq	$t1, $t0, call_library		# calling code, same for all options
 	
 	# ---------------------------------------------------
