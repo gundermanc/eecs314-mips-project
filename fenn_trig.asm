@@ -42,7 +42,10 @@ trig_main:
 
 	mov.d 	$f12, $f0	# result in f0 is moved to f12 for the print double syscall	
 	jal	printdb
-	jr 	$ra
+# returns to the main menu
+# TODO: this works, why does this work !?!?!
+        print_string ( newline )
+        j 	main_menu
 
 normalize_x:			# Put x in the range between -PI and PI
 	l.d	$f2, pi		# Load in constants
@@ -177,16 +180,12 @@ subsqrt:
     	jr	$ra             # return to caller
 
 readDouble:
-	li	$v0, 3
+	li	$v0, 7
 	syscall
 	jr	$ra
 
 printdb:
-	li	$v0, 7
+	li	$v0, 3
 	syscall
 	jr	$ra	
-
-# returns to the main menu
-        print_string ( newline )
-        j main_menu
 	

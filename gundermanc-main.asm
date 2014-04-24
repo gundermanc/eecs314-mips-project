@@ -98,7 +98,7 @@ menu_begin:
 	# ---------------------------------------------------
 	# no options matched, ask again
 	print_string ( menu_unknown_prompt )
-	j	menu_begin
+	j	main_menu
 	
 call_library:
 	jr	$t2	
