@@ -4,11 +4,12 @@
 # Multiplies square matrices up to size 10 x 10
 # Can double-check correctness @ http://www.bluebit.gr/matrix-calculator/multiply.aspx
 ######################################################################################
-.include "gundermanc-macros.asm"
+
+#.include "gundermanc-macros.asm"	# include not needed when part of the bigger application
 
 .data      
                                      
-newline:
+pabb_newline:
 	.asciiz	"\n"
 	.align	2
 num_size:
@@ -35,7 +36,7 @@ prompt:
 
 	j main
 	
-main:
+mat_mult_main:
 	la $s0, num_size	# initialize the address of num_size
 	la $s1, Mat1		# initialize Mat1 address
 	la $s2, Mat2		# initialize Mat2 address
@@ -52,8 +53,8 @@ feed_input:
 	li $v0, 4
 	syscall
 	
-	# insert newline
-	la $a0, newline
+	# insert pabb_newline
+	la $a0, pabb_newline
 	li $v0, 4
 	syscall
 	
@@ -76,8 +77,8 @@ feed_input:
 	li $v0, 4
 	syscall
 	
-	# insert newline
-	la $a0, newline
+	# insert pabb_newline
+	la $a0, pabb_newline
 	li $v0, 4
 	syscall
 	
@@ -108,8 +109,8 @@ feed_input:
 	li $v0, 4
 	syscall
 	
-	# insert newline
-	la $a0, newline
+	# insert pabb_newline
+	la $a0, pabb_newline
 	li $v0, 4
 	syscall	
 		
@@ -230,7 +231,7 @@ print_loop:
 	la $a0, delimiter
 	syscall	
 	
-	# count until $t5 == num_size, then print newline (to print matrix-style format)
+	# count until $t5 == num_size, then print pabb_newline (to print matrix-style format)
 	addi $t5, $t5, 1		# increment the counter for the ROW DELIMITER
 	post_break:			# use this label to return here if we need a row break
 	beq $t5, $s6, line_break	# if we've printed num_size elements, go print a line break
@@ -243,12 +244,15 @@ print_loop:
 line_break:
 	li $t5, 0			# reset $t5 to 0
 	
-	li $v0, 4			# insert newline after each row
-	la $a0, newline
+	li $v0, 4			# insert pabb_newline after each row
+	la $a0, pabb_newline
 	syscall			
 	        
     	j post_break			# return to print_loop, continue execution after branch
             
 done:
-    	li $v0, 10		
-    	syscall
+    	
+# added by Chris, 4/23
+# return to linear algebra menu
+	print_string ( pabb_newline )
+	j lalg_main
