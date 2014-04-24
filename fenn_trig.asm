@@ -188,5 +188,5 @@ printdb:
 
 # returns to the main menu
         print_string ( newline )
-        j moc_main
+        j main_menu
 	
