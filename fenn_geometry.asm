@@ -17,8 +17,10 @@
 	give_r: .asciiz			"\nEnter radius r\n"
 	give_l: .asciiz			"\nEnter length l\n"
 	give_h: .asciiz			"\nEnter height h\n"
+	give_v: .asciiz			"\nEnter the volume of your shape\n"
 	volume: .asciiz			"\nVolume:  "
 	surface_area: .asciiz		"\nSurface Area:  "
+	height: .asciiz			"\nHeight:   "
 	improper: .asciiz		"\nI'm sorry, but you have entered an\nimproper value.  Please try again.\n"
 	
 .text
@@ -34,10 +36,12 @@ geometry_main:
 	
 	
 	beq	$s0, 1, cube
-	#beq	$s0, 2, prism	# check which function was selected
+	beq	$s0, 2, prism	# check which function was selected
 	#beq	$s0, 3, sphere
 	#beq	$s0, 4, cylinder
 	#beq	$s0, 5, cone
+	print_string improper
+	j geometry_main
 	
 	
 cube:
@@ -67,23 +71,58 @@ cube_sa:
 prism:
 	print_string find_height3
 	read_integer ($s1)
-	#beq 	$s1, 1, prism_vol
-	#beq	$s1, 2, prism_sa
-	#beq	$s1, 3, prism_find_h
+	beq 	$s1, 1, prism_vol
+	beq	$s1, 2, prism_sa
+	beq	$s1, 3, prism_find_h
+	print_string improper
+	j prism			
 	
 prism_vol:
+	jal prism_wlh
+	mul.d $f2, $f2, $f4	# width * length
+	mul.d $f12, $f2, $f0	# width * length * height
+	print_string volume
+	j	geo_finish
+	
+prism_sa:
+	jal prism_wlh
+	mul.d $f6, $f2, $f4	# width * length
+	mul.d $f8, $f2, $f0	# width * height
+	mul.d $f10, $f4, $f0	# length * height
+	add.d $f6, $f6, $f6	# multiply each of those by 2
+	add.d $f8, $f8, $f8
+	add.d $f10, $f10, $f10
+	add.d $f12, $f6, $f8
+	add.d $f12, $f12, $f10 	# sa = 2wl + 2wh + 2lh
+	print_string surface_area
+	j	geo_finish
+
+prism_find_h:
+	print_string give_w	# f2 = width, f4 = length, f0 = volume
+	read_double
+	mov.d	$f2, $f0
+	print_string give_l
+	read_double
+	mov.d	$f4, $f0
+	print_string give_v
+	read_double
+	mul.d	$f4, $f4, $f2
+	div.d	$f12, $f0, $f4
+	print_string height
+	j	geo_finish
+	
+
+prism_wlh:			# Gets the values for width, length, and height and stores them in f2, f4, and f0 respectively
 	print_string give_w
 	read_double
 	mov.d	$f2, $f0
 	print_string give_l
 	read_double
 	mov.d	$f4, $f0
-	print_string give_r
+	print_string give_h
 	read_double
-	mul.d $f2, $f2, $f4	# width * length
-	mul.d $f12, $f2, $f0	# width * length * height
-	print_string volume
-	jr $ra
+	jr	$ra
+	
 
 geo_finish:			# finishes the program by printing out the double of whatever value was calculated then returns to main menu.
 	print_double
