@@ -8,6 +8,9 @@
 	shapes: .asciiz 		"\nCube[1]\nPrism[2]\nSphere[3]\nCylinder[4]\nCone[5]\n----------------------\n"
 	#pi: .double 3.14159265
 	six: .double 6
+	four_thirds_pi: .double		4.1887902
+	one_third_pi: .double		1.0471975
+	four_pi: .double		12.566371
 	geo_func_select: .asciiz	"Enter the number in square brackets that corresponds\nto the function you'd like to perform on this shape\n"
 	geo_functions: .asciiz		"\nVolume[1]\nSurface Area[2]\n"
 	find_radius: .asciiz		"Find Radius[3]\n"
@@ -122,6 +125,40 @@ prism_wlh:			# Gets the values for width, length, and height and stores them in 
 	print_string give_h
 	read_double
 	jr	$ra
+
+sphere:
+	print_string find_radius
+	read_integer ($s1)
+	beq 	$s1, 1, sphere_vol
+	beq	$s1, 2, sphere_sa
+	#beq	$s1, 3, sphere_find_r
+	print_string improper
+	j sphere
+
+sphere_vol:				# Sphere vol = 4/3pi*r^3
+	print_string give_r
+	read_double
+	mul.d 	$f2, $f0, $f0
+	mul.d 	$f2, $f2, $f0
+	l.d	$f4, four_thirds_pi
+	mul.d 	$f12, $f2, $f4
+	print_string volume
+	j	geo_finish
+
+sphere_sa:				# Sphere sa = 4pi*r^2
+	print_string give_r
+	read_double	
+	mul.d 	$f2, $f0, $f0
+	l.d	$f4, four_pi
+	mul.d 	$f12, $f2, $f4
+	print_string surface_area
+	j	geo_finish
+	
+#sphere_find_r:
+#	print_string give_v
+#	read_double
+#	l.d	$f4, four_thirds_pi
+#	div.d	$f12, $f0, $f4
 	
 
 geo_finish:			# finishes the program by printing out the double of whatever value was calculated then returns to main menu.
