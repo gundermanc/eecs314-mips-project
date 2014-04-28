@@ -43,6 +43,20 @@
 	
 .end_macro
 
+# read a double in from the console in f0
+.macro	read_double
+	li   $v0, 7
+	syscall
+
+.end_macro
+
+# print double from the f12 register
+.macro	print_double
+	li   $v0, 3
+	syscall
+	
+.end_macro
+
 # pushes a return value to the stack
 .macro	push_return_value
 	addi	$sp, $sp, -4		# move stack pointer

@@ -32,7 +32,7 @@ trig_main:
 	read_integer ( $s0 )	# read the function selection store it in s0
 		
 	print_string give_x
-	jal 	readDouble	# x is stored in f0
+	read_double			# x is stored in f0
 	beq	$s0, 1, high_pres_sin	# check which function was selected
 	beq	$s0, 2, cos
 	beq	$s0, 3, tan
@@ -41,7 +41,7 @@ trig_main:
 	beq	$s0, 6, cot
 
 	mov.d 	$f12, $f0	# result in f0 is moved to f12 for the print double syscall	
-	jal	printdb
+	print_double
 # returns to the main menu
 # TODO: this works, why does this work !?!?!
         print_string ( newline )
@@ -178,14 +178,5 @@ subsqrt:
     	bc1f    subsqrt         # if flag not set, jump to sqrt
     	mov.d   $f0, $f2        # result = $f0
     	jr	$ra             # return to caller
-
-readDouble:
-	li	$v0, 7
-	syscall
-	jr	$ra
-
-printdb:
-	li	$v0, 3
-	syscall
-	jr	$ra	
+	
 	

@@ -16,7 +16,8 @@
 	menu_option_trig:	.asciiz "(3) Trigonometry\n"
 	menu_option_math:	.asciiz "(4) Math (pow, fact, log)\n"
 	menu_option_lalg:	.asciiz "(5) Linear algebra\n"
-		
+	menu_option_geo:	.asciiz "(6) Geometry\n"
+			
 	exit_prompt:		.asciiz "\n\nGood bye! :)"
 	
 .text 
@@ -28,6 +29,7 @@
 .include "gundermanc-conversions.asm"
 .include "gundermanc-centers.asm"
 .include "fenn_trig.asm"
+.include "fenn_geometry.asm"
 .include "ee-menu.asm"
 .include "gundermanc-linalg.asm"
 
@@ -56,6 +58,7 @@ menu_begin:
 	print_string ( menu_option_trig )
 	print_string ( menu_option_math )
 	print_string ( menu_option_lalg )
+	print_string ( menu_option_geo )
 	print_string ( menu_option_quit )
 	
 	# menu option select. bad runtime complexity, I know, but I don't know jump tables
@@ -93,6 +96,11 @@ menu_begin:
 	# (5) Linear Algebra
 	li	$t1, 5				# key that must be pressed
 	la	$t2, lalg_main			# library entry point address
+	beq	$t1, $t0, call_library		# calling code, same for all options
+	
+	# (6) Geometry
+	li	$t1, 6				# key that must be pressed
+	la	$t2, geometry_main		# library entry point address
 	beq	$t1, $t0, call_library		# calling code, same for all options
 	
 	# ---------------------------------------------------
