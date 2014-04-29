@@ -9,7 +9,7 @@
 
 log_main:
 	print_string(ask_num)
-	read_float($f0)
+	read_float
 	mov.s $f1,$f0
 	print_string(log_ask_base)
 	li   $v0, 6

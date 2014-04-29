@@ -35,12 +35,10 @@
 	move  %register, $v0
 .end_macro
 
-# read a float in from the console
-.macro	read_float ( %register )
+# read a float in from the console to $f0
+.macro	read_float
 	li   $v0, 6
-	syscall
-	#mov.s  %register, $f0
-	
+	syscall	
 .end_macro
 
 # read a double in from the console in f0

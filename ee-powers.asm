@@ -7,7 +7,7 @@
 #uses $t0-$t3
 pow_main:
 	print_string(ask_base)
-	read_float($f0)
+	read_float
 	print_string(ask_power)
 	read_integer($t1)
 	move $t2,$t1	#t2 is num times to multiply
