@@ -9,8 +9,9 @@
 	#pi: .double 3.14159265
 	six: .double 6
 	four_thirds_pi: .double		4.1887902
-	one_third_pi: .double		1.0471975
+	one_third: .double		0.3333333
 	four_pi: .double		12.566371
+	three: .double			3
 	geo_func_select: .asciiz	"Enter the number in square brackets that corresponds\nto the function you'd like to perform on this shape\n"
 	geo_functions: .asciiz		"\nVolume[1]\nSurface Area[2]\n"
 	find_radius: .asciiz		"Find Radius[3]\n"
@@ -21,9 +22,11 @@
 	give_l: .asciiz			"\nEnter length l\n"
 	give_h: .asciiz			"\nEnter height h\n"
 	give_v: .asciiz			"\nEnter the volume of your shape\n"
+	give_sa: .asciiz		"\nEnter the surface area of your shape\n"
 	volume: .asciiz			"\nVolume:  "
 	surface_area: .asciiz		"\nSurface Area:  "
 	height: .asciiz			"\nHeight:   "
+	radius: .asciiz			"\nRadius:   "
 	improper: .asciiz		"\nI'm sorry, but you have entered an\nimproper value.  Please try again.\n"
 	
 .text
@@ -40,9 +43,9 @@ geometry_main:
 	
 	beq	$s0, 1, cube
 	beq	$s0, 2, prism	# check which function was selected
-	#beq	$s0, 3, sphere
-	#beq	$s0, 4, cylinder
-	#beq	$s0, 5, cone
+	beq	$s0, 3, sphere
+	beq	$s0, 4, cylinder
+	beq	$s0, 5, cone
 	print_string improper
 	j geometry_main
 	
@@ -131,7 +134,7 @@ sphere:
 	read_integer ($s1)
 	beq 	$s1, 1, sphere_vol
 	beq	$s1, 2, sphere_sa
-	#beq	$s1, 3, sphere_find_r
+	beq	$s1, 3, sphere_find_r
 	print_string improper
 	j sphere
 
@@ -154,11 +157,142 @@ sphere_sa:				# Sphere sa = 4pi*r^2
 	print_string surface_area
 	j	geo_finish
 	
-#sphere_find_r:
-#	print_string give_v
-#	read_double
-#	l.d	$f4, four_thirds_pi
-#	div.d	$f12, $f0, $f4
+sphere_find_r:				# r = sqrt(sa/4pi)
+	print_string give_sa
+	read_double
+	l.d	$f4, four_pi
+	div.d	$f12, $f0, $f4
+	sqrt.d	$f12, $f12
+	print_string radius
+	j	geo_finish
+	
+cylinder:
+	print_string find_radius
+	print_string find_height4
+	read_integer ($s1)
+	beq 	$s1, 1, cyl_vol
+	beq	$s1, 2, cyl_sa
+	beq	$s1, 3, cyl_find_r
+	beq	$s1, 4, cyl_find_h
+	print_string improper
+	j cylinder
+
+cyl_vol:
+	jal	get_rh
+	jal	cyl_cone_vol
+	print_string volume
+	j	geo_finish
+	
+cyl_cone_vol:				# Both cylinders and cones must compute this value - reduce redundancy
+	l.d	$f4, pi			# f4 = pi
+	mul.d	$f2, $f2, $f2		# f2 = r^2
+	mul.d	$f12, $f2, $f4		# f12 = pi * r^2
+	mul.d	$f12, $f12, $f0		# vol = pi * r^2 * h
+	jr	$ra
+
+cyl_sa:
+	jal	get_rh
+	l.d	$f4, two_pi		# f4 = 2pi
+	mul.d	$f12, $f2, $f4		# f12 = 2pi * r
+	mul.d	$f12, $f12, $f0		# f12 = 2pi * r * h
+	mul.d	$f2, $f2, $f2
+	mul.d	$f2, $f2, $f4		# f4 = 2pi * r^2
+	add.d	$f12, $f12, $f2		# sa = 2pi*r*h + 2(pi*r^2)
+	print_string surface_area
+	j	geo_finish				
+	
+	
+cyl_find_r:				# r = sqrt(vol/(h*pi))
+	jal	cyl_cone_find_r
+	print_string radius
+	j	geo_finish
+	
+cyl_cone_find_r:			# Both cylinders and cones must compute this value - reduce redundancy
+	print_string give_h
+	read_double
+	mov.d	$f2, $f0
+	print_string give_v
+	read_double
+	l.d	$f4, pi
+	div.d	$f12, $f0, $f2		# vol/h
+	div.d	$f12, $f12, $f4		# vol/(h*pi)
+	sqrt.d	$f12, $f12		# sqrt(vol/h*pi)
+	jr	$ra
+		
+cyl_find_h:				# h = vol/(pi*r^2)
+	jal	cyl_cone_find_h
+	print_string height
+	j	geo_finish
+	
+cyl_cone_find_h:			# Both cylinders and cones must compute this value - reduce redundancy
+	print_string give_r
+	read_double
+	mov.d	$f2, $f0
+	print_string give_v
+	read_double
+	l.d	$f4, pi
+	mul.d	$f2, $f2, $f2		# r^2
+	mul.d	$f2, $f2, $f4		# pi*r^2
+	div.d	$f12, $f0, $f2		# vol/(pi*r^2)
+	jr	$ra
+
+get_rh:					# Gets the radius and height and puts them in f2 and f0 respectively
+	print_string give_r
+	read_double
+	mov.d 	$f2, $f0		# f2 = r
+	print_string give_h
+	read_double			# f0 = h
+	jr	$ra
+	
+
+cone:
+	print_string find_radius
+	print_string find_height4
+	read_integer ($s1)
+	beq 	$s1, 1, cone_vol
+	beq	$s1, 2, cone_sa
+	beq	$s1, 3, cone_find_r
+	beq	$s1, 4, cone_find_h
+	print_string improper
+	j cone
+
+cone_vol:
+	jal	get_rh
+	jal	cyl_cone_vol
+	l.d	$f4, one_third
+	mul.d	$f12, $f12, $f4
+	print_string volume
+	j	geo_finish
+
+cone_sa:			# sa = pi*r * (r + sqrt(h^2 + r^2))
+	jal	get_rh
+	mul.d	$f6, $f2, $f2	# f6 = r^2
+	mul.d	$f8, $f0, $f0	# f8 = h^2
+	add.d	$f6, $f8, $f6	# f6 = r^2 + h^2
+	sqrt.d	$f6, $f6	# f6 = sqrt(h^2 + r^2)
+	add.d	$f6, $f6, $f2	# f6 = r + sqrt(h^2 + r^2)
+	l.d	$f4, pi
+	mul.d	$f2, $f2, $f4	# f2 = pi*r
+	mul.d	$f12, $f2, $f6	# f12 = pi*r * (r + sqrt(h^2 + r^2))
+	print_string surface_area
+	j	geo_finish
+	
+cone_find_r:			# r = sqrt(3*vol/(pi*h))
+	jal	get_rh
+	jal	cyl_cone_find_r
+	l.d	$f4, three
+	sqrt.d	$f4, $f4
+	mul.d	$f12, $f12, $f4
+	print_string radius
+	j	geo_finish
+	
+cone_find_h:			# h = 3*vol/(pi*r^2)
+	jal	get_rh
+	jal	cyl_cone_find_h
+	l.d	$f4, three
+	mul.d	$f12, $f12, $f4
+	print_string radius
+	j	geo_finish
 	
 
 geo_finish:			# finishes the program by printing out the double of whatever value was calculated then returns to main menu.
