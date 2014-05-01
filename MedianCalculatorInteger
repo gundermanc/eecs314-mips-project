@@ -8,7 +8,7 @@ med_newline: .asciiz "\n"
 med_space: .asciiz " "
 .text
 
-main:
+med_main:
 
 #initializes some variables
 la $t0, med_array
@@ -147,3 +147,7 @@ syscall
 la $a0, 2
 li $v0, 1
 syscall
+
+# added by Chris, returns to the menu
+print_string ( avg_newline )
+jal moc_main

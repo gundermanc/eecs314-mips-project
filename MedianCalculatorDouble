@@ -9,7 +9,7 @@ medd_newline: .asciiz "\n"
 medd_space: .asciiz " "
 .text
 
-main:
+medd_main:
 
 #initializes some variables
 la $t0, medd_array
@@ -148,3 +148,6 @@ li $v0, 4
 syscall
 li $v0, 3
 syscall
+
+print_string ( avg_newline )
+jal moc_main
