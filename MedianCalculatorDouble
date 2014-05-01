@@ -1,0 +1,150 @@
+.data
+.align 8
+medd_array: .space 808
+medd_instructions: .asciiz "Enter up to 100 numbers to get the median of. '0' will end inputs."
+medd_prompt: .asciiz "Enter a number: "
+medd_report: .asciiz "The median is: "
+medd_slash: .asciiz "/"
+medd_newline: .asciiz "\n"
+medd_space: .asciiz " "
+.text
+
+main:
+
+#initializes some variables
+la $t0, medd_array
+
+#prints instructions for the user
+la $a0, medd_instructions
+li $v0, 4
+syscall
+
+#prints a newline
+la $a0, medd_newline
+li $v0, 4
+syscall
+
+medd_input:
+
+#prints out prompt to the user
+la $a0, medd_prompt
+li $v0, 4
+syscall
+
+#gets user input
+li $v0, 7
+syscall
+
+#puts integer into array
+s.d $f0, 0($t0)
+
+#moves to next array index
+addi $t0, $t0, 8
+
+#continues asking for input if last input was not 0
+c.eq.d $f0, $f2
+bc1t medd_sort
+
+j medd_input
+
+medd_set1:
+
+li $t1, 1
+j medd_back
+
+medd_sort:
+
+#initializes loop variables
+la  $t7, medd_array
+add $t7, $t7, 800   
+                     
+medd_sortloop1:
+
+#initializes more variables, used for checking when array is sorted
+add $t6, $zero, $zero
+la  $a0, medd_array
+
+medd_sortloop2:
+
+#swaps items if necessary
+l.d  $f2, 0($a0)
+l.d  $f4, 8($a0)
+c.lt.d $f2, $f4
+bc1t medd_set1
+li $t1, 0
+
+medd_back:
+
+beq $t1, $zero, medd_sortloop3
+add $t6, $zero, 1
+s.d  $f2, 8($a0)
+s.d  $f4, 0($a0)
+    
+medd_sortloop3:
+
+#continues through array to check if it is sorted
+addi $a0, $a0, 8
+bne  $a0, $t7, medd_sortloop2
+bne  $t6, $zero, medd_sortloop1
+
+medd_calc:
+
+#gets the total number of entries
+la $t3, medd_array
+sub $t0, $t0, $t3
+div $t0, $t0, 8
+addi $t3, $t0, -1
+
+#divides number of entries in half
+li $t2, 2
+div $t3, $t2
+
+#determines whether there is a remainder or not
+mfhi $t5
+beqz $t5, medd_evenfinish
+
+#moves to the correct index
+mflo $t4
+li $t3, 8
+mult $t4, $t3
+mflo $t2
+la $t1, medd_array
+add  $t4, $t1, $t2
+
+#prints out the median if there were an odd number of numbers
+la $a0, medd_report
+li $v0, 4
+syscall
+l.d $f12 ($t4)
+li $v0, 3
+syscall
+la $v0, 10
+syscall
+
+medd_evenfinish:
+
+#moves to the correct index
+mflo $t4
+addi $t4, $t4, -1
+li $t3, 8
+mult $t4, $t3
+mflo $t2
+la $t1, medd_array
+add  $t4, $t1, $t2
+
+#calculates the median if there are an even number of numbers
+l.d $f6, ($t4)
+addi $t4, $t4, 8
+l.d $f8, ($t4)
+add.d $f6, $f6, $f8
+li $t7, 2
+mtc1 $t7, $f10
+cvt.s.w $f11, $f10
+div.d  $f12, $f6, $f10
+
+#prints the even median for the user
+la $a0, medd_report
+li $v0, 4
+syscall
+li $v0, 3
+syscall

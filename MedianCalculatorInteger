@@ -1,7 +1,5 @@
 .data
-# added by Chris 4/22, fixes memory alignment bug
-.align 4
-	med_array: .space 404
+med_array: .space 404
 med_instructions: .asciiz "Enter up to 100 integers in order to get the median of. '0' will end inputs."
 med_prompt: .asciiz "Enter an integer: "
 med_report: .asciiz "The median is: "
@@ -10,7 +8,7 @@ med_newline: .asciiz "\n"
 med_space: .asciiz " "
 .text
 
-med_main:
+main:
 
 #initializes some variables
 la $t0, med_array
@@ -43,9 +41,39 @@ sw $v0, 0($t0)
 addi $t0, $t0, 4
 
 #continues asking for input if last input was not 0
-beqz $v0, med_calc
+beqz $v0, med_sort
 
 j med_input
+
+med_sort:
+
+#initializes loop variables
+la  $t7, med_array
+add $t7, $t7, 400   
+                     
+med_sortloop1:
+
+#initializes more variables, used for checking when array is sorted
+add $t6, $zero, $zero
+la  $a0, med_array
+
+med_sortloop2:
+
+#swaps items if necessary
+lw  $t5, 0($a0)
+lw  $t4, 4($a0)
+slt $t1, $t5, $t4
+beq $t1, $zero, med_sortloop3
+add $t6, $zero, 1
+sw  $t5, 4($a0)
+sw  $t4, 0($a0)
+    
+med_sortloop3:
+
+#continues through array to check if it is sorted
+addi $a0, $a0, 4
+bne  $a0, $t7, med_sortloop2
+bne  $t6, $zero, med_sortloop1
 
 med_calc:
 
@@ -119,7 +147,3 @@ syscall
 la $a0, 2
 li $v0, 1
 syscall
-
-# added by Chris, returns to the menu
-print_string ( avg_newline )
-jal moc_main
