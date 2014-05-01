@@ -2,11 +2,11 @@ Our EECS 314 MIPS Assembly Project:
 A suite of Math functions.
 
 Suite					Owner			Progress
-Menus					Gundermanc		25%
-Temperature Conversions Gundermanc		100%
-Length Conversions		Gundermanc		100%
-Measures of Center		las203			70%
-Linear alg.				pabb			0%
+Menus					Gundermanc		100%
+Temperature Conversions 		Gundermanc		100%
+Length Conversions			Gundermanc		100%
+Measures of Center			las203			100%
+Linear alg.				pabb			100%
 
 System Requirements:
 Running this application requires MARS MIPS simulator. To execute, open the
