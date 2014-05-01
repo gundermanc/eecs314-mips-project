@@ -118,8 +118,9 @@ syscall
 l.d $f12 ($t4)
 li $v0, 3
 syscall
-la $v0, 10
-syscall
+#la $v0, 10
+#syscall
+j	medd_finish
 
 medd_evenfinish:
 
@@ -149,5 +150,7 @@ syscall
 li $v0, 3
 syscall
 
+# added by Chris, returns to main menu
+medd_finish:
 print_string ( avg_newline )
 jal moc_main

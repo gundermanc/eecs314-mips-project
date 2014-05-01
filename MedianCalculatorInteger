@@ -1,5 +1,6 @@
 .data
-med_array: .space 404
+.align 4		# align bytes to WORD boundardy
+	med_array: .space 404
 med_instructions: .asciiz "Enter up to 100 integers in order to get the median of. '0' will end inputs."
 med_prompt: .asciiz "Enter an integer: "
 med_report: .asciiz "The median is: "
@@ -106,8 +107,9 @@ syscall
 lw $a0 ($t4)
 li $v0, 1
 syscall
-la $v0, 10
-syscall
+#la $v0, 10
+#syscall
+j	med_finish
 
 med_evenfinish:
 
@@ -149,5 +151,6 @@ li $v0, 1
 syscall
 
 # added by Chris, returns to the menu
+med_finish:
 print_string ( avg_newline )
 jal moc_main
