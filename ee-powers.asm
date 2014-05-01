@@ -3,8 +3,6 @@
 	ask_power: .asciiz "Enter the power[+-int]: "
 	power_result: .asciiz "Result: "
 	.text
-#finds $t0^$t1
-#uses $t0-$t3
 pow_main:
 	print_string(ask_base)
 	read_float

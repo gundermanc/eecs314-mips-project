@@ -6,7 +6,6 @@
 	ask_num: .asciiz "Enter the number[float]: "
 	log_ask_base: .asciiz "Enter the base[float]: "
 	.text
-
 log_main:
 	print_string(ask_num)
 	read_float
@@ -39,12 +38,12 @@ log_main:
 	addi $v0,$zero,2 	#print float
 	syscall
 	j logdone
-			#done
+
 calcln:	#b is in f8, a in f4
 	l.s  $f1,ln10
 	mul.s $f8,$f8,$f1 # b*ln(10)
 	add.s $f0,$f8,$f4
-	jr $ra 		#return
+	jr $ra
 
 findab:
 	l.s $f4,one_ee
@@ -62,6 +61,7 @@ findabloop:
 			#a is f2
 	jr $ra
 
+#uses taylor series
 nlogloop: #f2 is a
 	move $t6,$ra #save return point
 	# a-1

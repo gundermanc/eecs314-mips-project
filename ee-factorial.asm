@@ -3,17 +3,11 @@
 	ask_fact: .asciiz "Enter a number[+int]: "
 	ltzerror: .asciiz "Number must be a positive integer"
 	.text
-#finds $t0!
-#uses $t0-$t3
 fact_main:
 	print_string(ask_fact)
 	read_integer($t0)
-	######setup:
-	#addi $t0,$zero,4
-	######
 	move $t1,$t0
-	
-	slt $t2,$t0,$zero
+	slt $t2,$t0,$zero #check that number is >0
 	beq $t0,$zero,error
 	bne $t2,$zero,error
 factloop:
